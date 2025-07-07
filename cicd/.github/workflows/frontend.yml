@@ -1,0 +1,30 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    paths:
+      - 'Frotend/cicd/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/cicd-frontend:latest ./Frotend/cicd
+      - name: Login to DockerHub
+        run: echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/cicd-frontend:latest
+
+  deploy:
+    runs-on: [self-hosted, frontend]
+    needs: build-and-push
+    steps:
+      - name: Pull Docker image
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/cicd-frontend:latest
+      - name: Stop old container
+        run: docker rm -f cicd-frontend || true
+      - name: Run new container
+        run: docker run -d --name cicd-frontend -p 80:80 ${{ secrets.DOCKERHUB_USERNAME }}/cicd-frontend:latest 
