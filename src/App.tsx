@@ -11,7 +11,7 @@ function App() {
     fetch('http://3.108.63.13:4000/api/hello')
       .then(res => res.json())
       .then(data => setMessage(data.message))
-      .catch(() => setMessage('Could not connect to backend due to problem path'))
+      .catch(() => setMessage('Could not connect to backend due to problem path4'))
   }, [])
 
   return (
