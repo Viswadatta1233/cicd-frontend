@@ -8,7 +8,7 @@ function App() {
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    fetch('http://localhost:4000/api/hello')
+    fetch('http://3.108.63.13:4000/api/hello')
       .then(res => res.json())
       .then(data => setMessage(data.message))
       .catch(() => setMessage('Could not connect to backend'))
